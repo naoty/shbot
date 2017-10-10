@@ -18,6 +18,10 @@ func main() {
 		}
 
 		str = strings.TrimRight(str, "\n")
+		if str == "" {
+			continue
+		}
+
 		fmt.Println(str)
 	}
 }
