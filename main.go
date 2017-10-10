@@ -6,6 +6,6 @@ import (
 )
 
 func main() {
-	fmt.Println("TODO: write something")
+	fmt.Println("shbot> ")
 	os.Exit(0)
 }
