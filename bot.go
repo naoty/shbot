@@ -12,7 +12,7 @@ type Bot struct {
 	Adapter adapters.Adapter
 }
 
-// Run starts to accept messages from bot.Input and send messages to bot.Output.
+// Run starts to accept messages from bot.Adapter.
 func (bot *Bot) Run() {
 	for {
 		bot.Adapter.Prepare()
