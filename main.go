@@ -41,9 +41,12 @@ func help() string {
 	lines = append(lines, "  shbot --help | -h")
 	lines = append(lines, "")
 	lines = append(lines, "Options:")
-	lines = append(lines, "  --adapter, -a <adapter> Specify adapter [default: shell]")
-	lines = append(lines, "  --version, -v           Show version number")
-	lines = append(lines, "  --help, -h              Show help message")
+	lines = append(lines, "  --adapter, -a <adapter>: Specify adapter [default: shell]")
+	lines = append(lines, "  --version, -v:           Show version number")
+	lines = append(lines, "  --help, -h:              Show help message")
+	lines = append(lines, "")
+	lines = append(lines, "Environment variables:")
+	lines = append(lines, "  SLACK_ACCESS_TOKEN: Access token for bot user")
 
 	return strings.Join(lines, "\n")
 }
@@ -53,7 +56,7 @@ func findAdapter(name string) adapters.Adapter {
 	case "shell":
 		return adapters.NewShell()
 	case "slack":
-		return &adapters.Slack{}
+		return adapters.NewSlack()
 	default:
 		return adapters.NewShell()
 	}
