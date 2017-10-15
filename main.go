@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/naoty/shbot/adapters"
 )
 
 var version = "0.1.0"
@@ -20,7 +22,7 @@ func main() {
 		}
 	}
 
-	bot := &Bot{Input: os.Stdin, Output: os.Stdout, ErrorOutput: os.Stderr}
+	bot := &Bot{Adapter: adapters.NewShell()}
 	bot.Run()
 }
 

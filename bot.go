@@ -1,49 +1,41 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
-	"io"
 	"os/exec"
 	"strings"
+
+	"github.com/naoty/shbot/adapters"
 )
 
 // Bot represents a bot interacting with users.
 type Bot struct {
-	Input       io.Reader
-	Output      io.Writer
-	ErrorOutput io.Writer
+	Adapter adapters.Adapter
 }
 
 // Run starts to accept messages from bot.Input and send messages to bot.Output.
 func (bot *Bot) Run() {
 	for {
-		fmt.Fprint(bot.Output, "shbot> ")
+		bot.Adapter.Prepare()
 
-		reader := bufio.NewReader(bot.Input)
-		str, err := reader.ReadString('\n')
-		if err != nil {
-			fmt.Fprintln(bot.ErrorOutput, err)
-		}
-
-		str = strings.TrimRight(str, "\n")
-		if str == "" {
+		message := bot.Adapter.ReadMessage()
+		if message == "" {
 			continue
 		}
 
-		words := strings.Split(str, " ")
+		words := strings.Split(message, " ")
 		name, args := words[0], words[1:]
 		path, err := exec.LookPath(name)
 		if err != nil {
-			fmt.Fprintln(bot.ErrorOutput, err)
+			bot.Adapter.WriteError(err)
 			continue
 		}
 
 		command := exec.Command(path, args...)
-		command.Stdout = bot.Output
-		err = command.Run()
+		out, err := command.Output()
 		if err != nil {
-			fmt.Fprintln(bot.ErrorOutput, err)
+			bot.Adapter.WriteError(err)
 		}
+
+		bot.Adapter.WriteMessage(string(out))
 	}
 }
