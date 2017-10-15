@@ -26,7 +26,7 @@ func NewShell() *Shell {
 
 // Prepare runs preparation before accepting messages.
 func (adapter *Shell) Prepare() {
-	fmt.Fprintln(adapter.output, "shbot> ")
+	fmt.Fprint(adapter.output, "shbot> ")
 }
 
 // ReadMessage returns messages from input.
