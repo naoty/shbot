@@ -1,11 +1,14 @@
 package adapters
 
+import "fmt"
+
 // Slack is an adapter connected with Slack.
 type Slack struct {
 }
 
 // Prepare runs preparation before accepting messages.
 func (adapter *Slack) Prepare() {
+	fmt.Println("TODO: Connect with Slack")
 }
 
 // ReadMessage returns messages from input.
