@@ -59,7 +59,8 @@ func (adapter *Slack) WriteMessage(text string) {
 	params.AsUser = true
 
 	channel := adapter.context.channel
-	adapter.client.PostMessage(channel, text, params)
+	markdown := fmt.Sprintf("```%s```", text)
+	adapter.client.PostMessage(channel, markdown, params)
 }
 
 // WriteError send an error message to output.
