@@ -9,7 +9,8 @@ import (
 
 // Slack is an adapter connected with Slack.
 type Slack struct {
-	session *slack.RTM
+	client  *slack.Client
+	rtm     *slack.RTM
 	context *context
 }
 
@@ -17,13 +18,13 @@ type Slack struct {
 func NewSlack() *Slack {
 	token := os.Getenv("SLACK_ACCESS_TOKEN")
 	client := slack.New(token)
-	client.SetDebug(true)
 
-	session := client.NewRTM()
-	go session.ManageConnection()
+	rtm := client.NewRTM()
+	go rtm.ManageConnection()
 
 	return &Slack{
-		session: session,
+		client:  client,
+		rtm:     rtm,
 		context: nil,
 	}
 }
@@ -41,7 +42,7 @@ func (adapter *Slack) Prepare() {
 // ReadMessage returns messages from input.
 func (adapter *Slack) ReadMessage() string {
 	select {
-	case message := <-adapter.session.IncomingEvents:
+	case message := <-adapter.rtm.IncomingEvents:
 		switch event := message.Data.(type) {
 		case *slack.MessageEvent:
 			adapter.context.channel = event.Channel
@@ -54,9 +55,11 @@ func (adapter *Slack) ReadMessage() string {
 
 // WriteMessage send a given message to output.
 func (adapter *Slack) WriteMessage(text string) {
+	params := slack.NewPostMessageParameters()
+	params.AsUser = true
+
 	channel := adapter.context.channel
-	message := adapter.session.NewOutgoingMessage(text, channel)
-	adapter.session.SendMessage(message)
+	adapter.client.PostMessage(channel, text, params)
 }
 
 // WriteError send an error message to output.
